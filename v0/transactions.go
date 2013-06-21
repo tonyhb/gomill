@@ -18,46 +18,47 @@ type TransactionRequest struct {
 
 type TransactionResponse struct {
 	Data struct {
-		Id            string
-		Amount        string
-		Origin_amount int
-		Status        string
-		Description   interface{}
-		Livemode      bool
-		Refunds       interface{}
-		Currency      string
-		Created_at    int
-		Updated_at    int
-		Response_code int
-		Invoices      []struct {
-		}
-		Payment struct {
-			Id           string
-			Type         string
-			Client       string
-			Card_type    string
-			Country      interface{}
-			Expire_month int
-			Expire_year  int
-			Card_holder  interface{}
-			Lsat4        string
-			Created_at   int
-			Updated_at   int
+		Id           string        `json:"id"`
+		Amount       string        `json:"amount"`
+		OriginAmount int           `json:"origin_amount"`
+		Status       string        `json:"status"`
+		Description  interface{}   `json:"description"`
+		Livemode     bool          `json:"livemode"`
+		Refunds      interface{}   `json:"refunds"`
+		Currency     string        `json:"currency"`
+		CreatedAt    int           `json:"created_at"`
+		UpdatedAt    int           `json:"updated_at"`
+		ResponseCode int           `json:"response_code"`
+		ShortId      interface{}   `json:"short_id"`
+		Invoices     []interface{} `json:"invoices"`
+		Fees         []interface{} `json:"fees"`
+		Payment      struct {
+			Id          string      `json:"id"`
+			Type        string      `json:"type"`
+			Client      string      `json:"client"`
+			CardType    string      `json:"card_type"`
+			Country     interface{} `json:"country"`
+			ExpireMonth interface{} `json:"expire_month"`
+			ExpireYear  interface{} `json:"expire_year"`
+			CardHolder  interface{} `json:"card_holder"`
+			Last4       string      `json:"last4"`
+			CreatedAt   int         `json:"created_at"`
+			UpdatedAt   int         `json:"updated_at"`
 		}
 		Client struct {
-			Id           string
-			Email        interface{}
-			Description  interface{}
-			Created_at   int
-			Updated_at   int
-			Parment      []struct{}
-			Subscription interface{}
+			Id           string        `json:"id"`
+			Email        interface{}   `json:"email"`
+			Description  interface{}   `json:"description"`
+			CreatedAt    int           `json:"created_at"`
+			UpdatedAt    int           `json:"updated_at"`
+			Payment      []interface{} `json:"payment"`
+			Subscription interface{}   `json:"subscription"`
 		}
-		Preauthorization interface{}
+		Preauthorization interface{} `json:"preauthorization"`
 	}
-	Error     interface{}
-	Exception interface{}
-	Mode      interface{}
+	Error     interface{} `json:"error"`
+	Exception interface{} `json:"exception"`
+	Mode      interface{} `json:"mode"`
 }
 
 // Sets the Amount field to a given value and optionally multiplies by 100 if
