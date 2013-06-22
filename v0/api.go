@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"reflect"
 )
 
 type PaymillAPI struct {
@@ -20,7 +19,7 @@ type PaymillError struct {
 }
 
 type Resource interface {
-	post() (response interface{}, urlResource string)
+	create() (response interface{}, urlResource string, urlParams url.Values)
 }
 
 // Create a new Paymill API struct with your API Key
@@ -31,36 +30,24 @@ func New(apiKey string) PaymillAPI {
 }
 
 func (this *PaymillAPI) Create(r Resource) (response interface{}, err error) {
-	var urlResource string
-	var urlValues url.Values
-	// Find out which type of request we're making. We've been passed a
-	// pointer to a resource and haven't used reflect.Indirect to get the
-	// value, so the names are prefixed with a * below.
-	switch reflect.TypeOf(r).String() {
-	case "*gomill.Transaction":
-		response, urlResource = r.post()
-		urlValues = url.Values{
-			"amount":      {r.(*Transaction).Amount},
-			"currency":    {r.(*Transaction).Currency},
-			"token":       {r.(*Transaction).Token},
-			"description": {r.(*Transaction).Description.(string)},
-		}
-	}
 	// Make the request to paymill
-	resp, err := http.PostForm("https://"+this.Key+":@api.paymill.com/v2/"+urlResource, urlValues)
+	response, urlResource, urlParams := r.create()
+	resp, err := http.PostForm("https://"+this.Key+":@api.paymill.com/v2/"+urlResource, urlParams)
 	if err != nil {
 		return new(interface{}), err
 	}
+	// Read the contents of the body into a bytes buffer
 	body, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	if err != nil {
 		return new(interface{}), err
 	}
-	// Check to see if this is an error.
+	// Check to see if this is an error so we can unmarshal into a PaymillError struct
 	if resp.StatusCode >= 400 {
 		response = new(PaymillError)
 		err = errors.New("Paymill API Error: Status " + resp.Status)
 	}
+	// Unmarshal into either the struct provided by (r Resource) or a PaymillError
 	json.Unmarshal(body, response)
 	return
 }

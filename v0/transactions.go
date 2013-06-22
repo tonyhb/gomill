@@ -3,6 +3,7 @@ package gomill
 import (
 	"reflect"
 	"strconv"
+	"net/url"
 )
 
 type Transaction struct {
@@ -65,6 +66,11 @@ func (this *Transaction) SetAmount(amount interface{}, inCents bool) {
 	this.Amount = value
 }
 
-func (this *Transaction) post() (response interface{}, urlResource string) {
-	return new(Transaction), "transactions"
+func (this *Transaction) create() (response interface{}, urlResource string, urlParams url.Values) {
+	return new(Transaction), "transactions", url.Values{
+		"amount":      {this.Amount},
+		"currency":    {this.Currency},
+		"token":       {this.Token},
+		"description": {this.Description.(string)},
+	}
 }
