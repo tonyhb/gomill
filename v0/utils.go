@@ -7,7 +7,7 @@ import (
 )
 
 // Converts all fields in a struct to a url.Values string map, as long as the
-// field has a paymill tag set.
+// field has a json tag set.
 func structToMap(i interface{}) (values url.Values) {
 	values = url.Values{}
 	iVal := reflect.ValueOf(i).Elem()
@@ -15,7 +15,7 @@ func structToMap(i interface{}) (values url.Values) {
 	for i := 0; i < iVal.NumField(); i++ {
 		f := iVal.Field(i)
 		// If we can't use this field - as set by the tag - skip it
-		tagName, tagOpts := parseTag(typ.Field(i).Tag.Get("paymill"))
+		tagName, tagOpts := parseTag(typ.Field(i).Tag.Get("json"))
 		if tagName == "" || tagName == "-" {
 			continue
 		}
